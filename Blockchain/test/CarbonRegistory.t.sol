@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import "lib/forge-std/src/Test.sol";
+import "../lib/forge-std/src/Test.sol";
 import "../src/CarbonRegistory.sol";
 import "../src/CarbonToken.sol";
 
