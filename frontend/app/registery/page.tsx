@@ -19,25 +19,27 @@ import {
   ChevronRight,
   Send,
   ClipboardList,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { useTheme } from "next-themes";
 
 export default function ProjectDataUpload() {
-  const { theme } = useTheme();
+  const { theme, setTheme } = useTheme();
   const isDark = theme === "dark";
 
   // State management
   const [projectName, setProjectName] = useState("");
   const [location, setLocation] = useState("");
-  const [plantCount, setPlantCount] = useState<number | "">("");
+  const [plantCount, setPlantCount] = useState("");
   const [species, setSpecies] = useState("");
   const [notes, setNotes] = useState("");
-  const [photoFiles, setPhotoFiles] = useState<FileList | null>(null);
-  const [droneFiles, setDroneFiles] = useState<FileList | null>(null);
-  const [sensorFiles, setSensorFiles] = useState<FileList | null>(null);
-  const [otherDocs, setOtherDocs] = useState<FileList | null>(null);
+  const [photoFiles, setPhotoFiles] = useState(null);
+  const [droneFiles, setDroneFiles] = useState(null);
+  const [sensorFiles, setSensorFiles] = useState(null);
+  const [otherDocs, setOtherDocs] = useState(null);
   const [formProgress, setFormProgress] = useState(0);
   const [activeSection, setActiveSection] = useState("project");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -55,7 +57,7 @@ export default function ProjectDataUpload() {
   }, [projectName, location, plantCount, species, notes, photoFiles, droneFiles, sensorFiles, otherDocs]);
 
   // Form submission handler
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
@@ -70,10 +72,9 @@ export default function ProjectDataUpload() {
     if (sensorFiles) Array.from(sensorFiles).forEach((f) => formData.append("sensorLogs", f));
     if (otherDocs) Array.from(otherDocs).forEach((f) => formData.append("otherDocs", f));
 
-    // Simulate API call
     try {
       console.log("Form submitted", formData);
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate network delay
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       alert("Project data submitted successfully!");
     } catch (error) {
       console.error("Submission error:", error);
@@ -98,7 +99,7 @@ export default function ProjectDataUpload() {
     isDark ? "text-gray-200" : "text-gray-800"
   }`;
 
-  const navButtonClasses = (section: string) =>
+  const navButtonClasses = (section) =>
     `px-4 py-2 text-sm font-medium relative flex items-center space-x-2 transition-all duration-300 ${
       activeSection === section
         ? isDark
@@ -124,7 +125,7 @@ export default function ProjectDataUpload() {
       }`}
     >
       <div className="max-w-4xl mx-auto">
-        {/* Header */}
+        {/* Header with Theme Toggle */}
         <div className="flex flex-col sm:flex-row justify-between items-center mb-8">
           <div className="text-center sm:text-left">
             <h1 className="text-4xl font-extrabold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
@@ -139,6 +140,19 @@ export default function ProjectDataUpload() {
             </p>
           </div>
           <div className="mt-4 sm:mt-0 flex items-center space-x-4">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setTheme(isDark ? "light" : "dark")}
+              className={`transition-all duration-300 ${
+                isDark
+                  ? "bg-gray-800 border-gray-600 hover:bg-gray-700 text-gray-300"
+                  : "bg-white border-gray-200 hover:bg-gray-50 text-gray-700"
+              }`}
+              aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+            >
+              {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            </Button>
             <span
               className={`text-sm font-medium ${
                 isDark ? "text-gray-300" : "text-gray-700"
@@ -193,9 +207,9 @@ export default function ProjectDataUpload() {
                 exit="hidden"
               >
                 <Card
-                  className={`shadow-lg ${
+                  className={`shadow-lg transition-all duration-300 ${
                     isDark ? "bg-gray-800 border-gray-700" : "bg-white border-gray-100"
-                  }`}
+                  } hover:shadow-xl`}
                 >
                   <CardHeader className="border-b border-gray-200 dark:border-gray-700">
                     <div className="flex justify-between items-center">
@@ -212,7 +226,7 @@ export default function ProjectDataUpload() {
                         </p>
                       </div>
                       <div
-                        className={`p-3 rounded-full ${
+                        className={`p-3 rounded-full transition-colors duration-300 ${
                           isDark ? "bg-gray-700" : "bg-blue-50"
                         }`}
                       >
@@ -241,7 +255,7 @@ export default function ProjectDataUpload() {
                             onChange={(e) => setProjectName(e.target.value)}
                             placeholder="e.g., Sundarbans Mangrove Restoration"
                             required
-                            className={`mt-1 ${
+                            className={`mt-1 transition-all duration-300 ${
                               isDark
                                 ? "bg-gray-700 text-white border-gray-600 focus:ring-blue-400"
                                 : "bg-white border-gray-200 focus:ring-blue-500"
@@ -258,7 +272,7 @@ export default function ProjectDataUpload() {
                             onChange={(e) => setLocation(e.target.value)}
                             placeholder="e.g., 21.90° N, 88.92° E"
                             required
-                            className={`mt-1 ${
+                            className={`mt-1 transition-all duration-300 ${
                               isDark
                                 ? "bg-gray-700 text-white border-gray-600 focus:ring-blue-400"
                                 : "bg-white border-gray-200 focus:ring-blue-500"
@@ -282,9 +296,9 @@ export default function ProjectDataUpload() {
                 exit="hidden"
               >
                 <Card
-                  className={`shadow-lg ${
+                  className={`shadow-lg transition-all duration-300 ${
                     isDark ? "bg-gray-800 border-gray-700" : "bg-white border-gray-100"
-                  }`}
+                  } hover:shadow-xl`}
                 >
                   <CardHeader className="border-b border-gray-200 dark:border-gray-700">
                     <div className="flex justify-between items-center">
@@ -301,7 +315,7 @@ export default function ProjectDataUpload() {
                         </p>
                       </div>
                       <div
-                        className={`p-3 rounded-full ${
+                        className={`p-3 rounded-full transition-colors duration-300 ${
                           isDark ? "bg-gray-700" : "bg-green-50"
                         }`}
                       >
@@ -328,9 +342,9 @@ export default function ProjectDataUpload() {
                             type="number"
                             id="plantCount"
                             value={plantCount}
-                            onChange={(e) => setPlantCount(Number(e.target.value))}
+                            onChange={(e) => setPlantCount(e.target.value)}
                             placeholder="e.g., 5000"
-                            className={`mt-1 ${
+                            className={`mt-1 transition-all duration-300 ${
                               isDark
                                 ? "bg-gray-700 text-white border-gray-600 focus:ring-green-400"
                                 : "bg-white border-gray-200 focus:ring-green-500"
@@ -346,7 +360,7 @@ export default function ProjectDataUpload() {
                             value={species}
                             onChange={(e) => setSpecies(e.target.value)}
                             placeholder="e.g., Rhizophora apiculata"
-                            className={`mt-1 ${
+                            className={`mt-1 transition-all duration-300 ${
                               isDark
                                 ? "bg-gray-700 text-white border-gray-600 focus:ring-green-400"
                                 : "bg-white border-gray-200 focus:ring-green-500"
@@ -364,7 +378,7 @@ export default function ProjectDataUpload() {
                           onChange={(e) => setNotes(e.target.value)}
                           placeholder="Enter observations from the field visit..."
                           rows={5}
-                          className={`mt-1 ${
+                          className={`mt-1 transition-all duration-300 ${
                             isDark
                               ? "bg-gray-700 text-white border-gray-600 focus:ring-green-400"
                               : "bg-white border-gray-200 focus:ring-green-500"
@@ -387,9 +401,9 @@ export default function ProjectDataUpload() {
                 exit="hidden"
               >
                 <Card
-                  className={`shadow-lg ${
+                  className={`shadow-lg transition-all duration-300 ${
                     isDark ? "bg-gray-800 border-gray-700" : "bg-white border-gray-100"
-                  }`}
+                  } hover:shadow-xl`}
                 >
                   <CardHeader className="border-b border-gray-200 dark:border-gray-700">
                     <div className="flex justify-between items-center">
@@ -406,7 +420,7 @@ export default function ProjectDataUpload() {
                         </p>
                       </div>
                       <div
-                        className={`p-3 rounded-full ${
+                        className={`p-3 rounded-full transition-colors duration-300 ${
                           isDark ? "bg-gray-700" : "bg-purple-50"
                         }`}
                       >
