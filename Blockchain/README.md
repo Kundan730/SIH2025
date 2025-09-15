@@ -68,4 +68,3 @@ forge create src/CarbonRegistory.sol:CarbonRegistry \
 
 
 test
-

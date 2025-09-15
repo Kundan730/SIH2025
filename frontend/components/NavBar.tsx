@@ -72,11 +72,6 @@ export default function Navbar() {
             </button> */}
             <div className="flex items-center space-x-3">
   <WalletMultiButton />
-  {publicKey && (
-    <span className="text-sm text-gray-500">
-      Connected: {publicKey.toBase58()}
-    </span>
-  )}
 </div>
 
           </div>

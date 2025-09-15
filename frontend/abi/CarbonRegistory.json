@@ -1,0 +1,196 @@
+[
+  {
+    "type": "constructor",
+    "inputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "carbonToken",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "contract BlueCarbonToken"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "entries",
+    "inputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "projectOwner",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "carbonCredits",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "coordinates",
+        "type": "string",
+        "internalType": "string"
+      },
+      {
+        "name": "orgId",
+        "type": "string",
+        "internalType": "string"
+      },
+      {
+        "name": "date",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "area",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getDetails",
+    "inputs": [
+      {
+        "name": "projectOwner",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "tuple[]",
+        "internalType": "struct CarbonRegistry.RegistryEntry[]",
+        "components": [
+          {
+            "name": "projectOwner",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "carbonCredits",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "coordinates",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "orgId",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "date",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "area",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "registerProject",
+    "inputs": [
+      {
+        "name": "credits",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "coordinates",
+        "type": "string",
+        "internalType": "string"
+      },
+      {
+        "name": "orgId",
+        "type": "string",
+        "internalType": "string"
+      },
+      {
+        "name": "date",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "area",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "event",
+    "name": "Registered",
+    "inputs": [
+      {
+        "name": "owner",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "credits",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "coordinates",
+        "type": "string",
+        "indexed": false,
+        "internalType": "string"
+      },
+      {
+        "name": "orgId",
+        "type": "string",
+        "indexed": false,
+        "internalType": "string"
+      },
+      {
+        "name": "date",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "area",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  }
+]
