@@ -45,7 +45,6 @@ import {
 } from "lucide-react";
 
 export default function AdminDashboard() {
-  // Helper functions for styling
   const getGradientByColor = (color: string): string => {
     switch(color) {
       case 'blue': return 'from-blue-500 to-blue-700';

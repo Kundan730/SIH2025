@@ -4,14 +4,16 @@ import React, { useState, useEffect } from 'react';
 import { Anchor, Menu, X, ChevronDown } from 'lucide-react';
 import { ModeToggle } from '@/components/ThemeToggle';
 import { useTheme } from 'next-themes';
+import { useWallet } from "@solana/wallet-adapter-react";
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { theme } = useTheme();
   const isDark = theme === 'dark';
+  const { publicKey } = useWallet();
 
-  // Handle scroll effect
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
@@ -65,9 +67,18 @@ export default function Navbar() {
             </div>
 
             {/* Get Started Button */}
-            <button className="bg-gradient-to-r from-blue-600 to-green-600 text-white px-6 py-2.5 rounded-xl font-semibold shadow-md hover:shadow-xl hover:shadow-blue-500/20 transition-all duration-300 transform hover:-translate-y-0.5 hover:scale-105 active:scale-95 border border-transparent">
+            {/* <button className="bg-gradient-to-r from-blue-600 to-green-600 text-white px-6 py-2.5 rounded-xl font-semibold shadow-md hover:shadow-xl hover:shadow-blue-500/20 transition-all duration-300 transform hover:-translate-y-0.5 hover:scale-105 active:scale-95 border border-transparent">
               Get Started
-            </button>
+            </button> */}
+            <div className="flex items-center space-x-3">
+  <WalletMultiButton />
+  {publicKey && (
+    <span className="text-sm text-gray-500">
+      Connected: {publicKey.toBase58()}
+    </span>
+  )}
+</div>
+
           </div>
 
           {/* Mobile Menu & Theme Toggle */}
