@@ -37,3 +37,37 @@ contract ContractTest is Test {
 ## Development
 
 This project uses [Foundry](https://getfoundry.sh). See the [book](https://book.getfoundry.sh/getting-started/installation.html) for instructions on how to install and use Foundry.
+
+
+## CMD
+forge build
+export PRIVATE_KEY= 0xe1a57117f1928e60b4ef0938f42c058c020b2af191a5cf39c191b3713201176b
+
+forge create src/BlueCarbonToken.sol:BlueCarbonToken \
+  --rpc-url https://eth-sepolia.g.alchemy.com/v2/OgX2oq12FWRTYy5zEJj9_5BHxL_JktB0 \
+  --private-key $PRIVATE_KEY
+
+
+forge verify-contract \
+  --chain sepolia \
+  --etherscan-api-key W1P2BWYQ6BE5E5Y3M8QUW5U3XG8S42W842 \
+  0x745a1C33a96717A3154519a2A35B8b432344c0B7 \
+  src/CarbonToken.sol:BlueCarbonToken
+
+
+forge create src/CarbonRegistory.sol:CarbonRegistry \
+  --rpc-url https://eth-sepolia.g.alchemy.com/v2/OgX2oq12FWRTYy5zEJj9_5BHxL_JktB0 \
+  --private-key $PRIVATE_KEY \
+  --etherscan-api-key W1P2BWYQ6BE5E5Y3M8QUW5U3XG8S42W842 \
+  --verify
+
+
+0x5e3d3513e57249102867622B1E525f387EC8ca30 //registory
+0x745a1C33a96717A3154519a2A35B8b432344c0B7 //carbon credit token
+
+
+test
+
+forge create src/CarbonRegistory.sol:CarbonRegistry \
+  --rpc-url https://eth-sepolia.g.alchemy.com/v2/OgX2oq12FWRTYy5zEJj9_5BHxL_JktB0 \
+  --private-key $PRIVATE_KEY

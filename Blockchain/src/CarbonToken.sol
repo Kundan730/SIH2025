@@ -1,7 +1,7 @@
 pragma solidity ^0.8.13;
 
 import {ERC20} from "../lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol";
-contract CarbonToken is ERC20 {
+contract BlueCarbonToken is ERC20 {
     address public registry; 
 
     constructor() ERC20("Blue Carbon Token", "BCT") {

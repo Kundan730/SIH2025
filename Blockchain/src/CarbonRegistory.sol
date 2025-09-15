@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import {ERC20} from "../lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol";
-import {CarbonToken} from "./CarbonToken.sol";
+import {BlueCarbonToken} from "./CarbonToken.sol";
 contract CarbonRegistry {
     struct RegistryEntry {
         uint256 id;
@@ -15,7 +15,7 @@ contract CarbonRegistry {
     }
 
     uint256 public nextId;
-    CarbonToken public carbonToken;
+    BlueCarbonToken public carbonToken;
     mapping(uint256 => RegistryEntry) public entries;
 
     event Registered(
@@ -29,7 +29,7 @@ contract CarbonRegistry {
     );
 
     constructor() {
-        carbonToken = new CarbonToken();
+        carbonToken = new BlueCarbonToken();
     }
 
     function registerProject(
