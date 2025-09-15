@@ -3,9 +3,9 @@ pragma solidity ^0.8.13;
 
 import {ERC20} from "../lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol";
 import {BlueCarbonToken} from "./CarbonToken.sol";
+
 contract CarbonRegistry {
     struct RegistryEntry {
-        uint256 id;
         address projectOwner;
         uint256 carbonCredits;
         string coordinates;
@@ -14,12 +14,11 @@ contract CarbonRegistry {
         uint256 area;
     }
 
-    uint256 public nextId;
     BlueCarbonToken public carbonToken;
-    mapping(uint256 => RegistryEntry) public entries;
+
+    mapping(address => RegistryEntry[]) public entries;
 
     event Registered(
-        uint256 indexed id,
         address indexed owner,
         uint256 credits,
         string coordinates,
@@ -41,21 +40,20 @@ contract CarbonRegistry {
     ) external {
         require(credits > 0, "Credits must be > 0");
 
-        entries[nextId] = RegistryEntry({
-            id: nextId,
+        RegistryEntry memory entry = RegistryEntry({
             projectOwner: msg.sender,
-            carbonCredits: credits * 1e18, // store scaled with 18 decimals
+            carbonCredits: credits * 1e18,
             coordinates: coordinates,
             orgId: orgId,
             date: date,
             area: area
         });
 
-        // Mint tokens to project owner
+        entries[msg.sender].push(entry);
+
         carbonToken.mint(msg.sender, credits * 1e18);
 
         emit Registered(
-            nextId,
             msg.sender,
             credits * 1e18,
             coordinates,
@@ -63,7 +61,9 @@ contract CarbonRegistry {
             date,
             area
         );
+    }
 
-        nextId++;
+    function getDetails(address projectOwner) external view returns (RegistryEntry[] memory) {
+        return entries[projectOwner];
     }
 }

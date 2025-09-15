@@ -191,35 +191,6 @@ export default function AdminDashboard() {
           : "bg-gradient-to-br from-blue-50 via-white to-green-50 text-gray-900"
       }`}
     >
-      {/* Admin Header */}
-      <div className={`w-full py-6 px-8 ${isDark ? 'bg-gray-800/50' : 'bg-white/50 shadow-sm'}`}>
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="flex items-center space-x-3">
-            <Shield className="w-8 h-8 text-blue-600" />
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
-              Admin Control Center
-            </h1>
-          </div>
-          <div className="flex items-center space-x-4">
-            <div className={`relative p-2 rounded-full ${isDark ? 'bg-gray-700' : 'bg-gray-100'}`}>
-              <Bell className={`w-5 h-5 ${isDark ? 'text-blue-400' : 'text-blue-600'}`} />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-            </div>
-            <div className={`relative p-2 rounded-full ${isDark ? 'bg-gray-700' : 'bg-gray-100'}`}>
-              <Settings className={`w-5 h-5 ${isDark ? 'text-blue-400' : 'text-blue-600'}`} />
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-600 to-green-600 flex items-center justify-center text-white font-bold">
-                A
-              </div>
-              <div>
-                <p className={`text-sm font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>Admin User</p>
-                <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Super Admin</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <div className="max-w-7xl mx-auto px-6 py-8">
         {/* Dashboard Summary */}

@@ -82,31 +82,6 @@ export default function ProjectDataUpload() {
         ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-blue-900 text-white'
         : 'bg-gradient-to-br from-blue-50 via-background to-green-50 text-foreground'
     }`}>
-      {/* Registry Header */}
-      <div className={`w-full py-6 px-8 ${isDark ? 'bg-gray-800/50' : 'bg-white/50 shadow-sm'}`}>
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="flex items-center space-x-3">
-            <Database className="w-8 h-8 text-green-600" />
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
-              Registry Portal
-            </h1>
-          </div>
-          <div className="flex items-center space-x-4">
-            <div className={`relative p-2 rounded-full ${isDark ? 'bg-gray-700' : 'bg-gray-100'}`}>
-              <HelpCircle className={`w-5 h-5 ${isDark ? 'text-blue-400' : 'text-blue-600'}`} />
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-r from-green-600 to-blue-600 flex items-center justify-center text-white font-bold">
-                R
-              </div>
-              <div>
-                <p className={`text-sm font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>Registry User</p>
-                <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Data Validator</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
       <div className="max-w-5xl mx-auto px-6 py-8">
         <div className="flex justify-between items-center mb-6">
           <div>

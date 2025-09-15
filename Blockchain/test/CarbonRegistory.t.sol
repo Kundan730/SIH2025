@@ -11,7 +11,6 @@ contract CarbonRegistryTest is Test {
     address ngo = address(0xBEEF);
 
     function setUp() public {
-        // Deploy registry (which internally deploys CarbonToken)
         registry = new CarbonRegistry();
         token = registry.carbonToken();
     }
@@ -30,29 +29,18 @@ contract CarbonRegistryTest is Test {
         vm.stopPrank();
 
         // Verify stored entry
-        (
-            uint256 id,
-            address owner,
-            uint256 credits,
-            string memory coords,
-            string memory orgId,
-            uint256 date,
-            uint256 area
-        ) = registry.entries(0);
+        CarbonRegistry.RegistryEntry[] memory userEntries = registry.getDetails(ngo);
+        CarbonRegistry.RegistryEntry memory entry = userEntries[0];
 
-        assertEq(id, 0);
-        assertEq(owner, ngo);
-        assertEq(credits, 100 ether); // scaled with 18 decimals
-        assertEq(coords, "12.9716N,77.5946E");
-        assertEq(orgId, "NGO-123");
-        assertEq(date, block.timestamp);
-        assertEq(area, 10);
+        assertEq(entry.projectOwner, ngo);
+        assertEq(entry.carbonCredits, 100 ether); // scaled with 18 decimals
+        assertEq(entry.coordinates, "12.9716N,77.5946E");
+        assertEq(entry.orgId, "NGO-123");
+        assertEq(entry.date, block.timestamp);
+        assertEq(entry.area, 10);
 
         // Verify token minting
         assertEq(token.balanceOf(ngo), 100 ether);
-
-        // Verify that nextId incremented
-        assertEq(registry.nextId(), 1);
     }
 
     function testRegisterProjectEmitsEvent() public {
@@ -61,7 +49,6 @@ contract CarbonRegistryTest is Test {
         // Expect event
         vm.expectEmit(true, true, false, true);
         emit CarbonRegistry.Registered(
-            0,
             ngo,
             100 ether,
             "12.9716N,77.5946E",
@@ -82,6 +69,8 @@ contract CarbonRegistryTest is Test {
     }
 
     function testFailRegisterProjectZeroCredits() public {
+        vm.startPrank(ngo);
+
         // This should revert because credits = 0
         registry.registerProject(
             0,
@@ -90,5 +79,7 @@ contract CarbonRegistryTest is Test {
             block.timestamp,
             10
         );
+
+        vm.stopPrank();
     }
 }
