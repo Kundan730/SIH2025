@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, Variants } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -23,26 +23,25 @@ import {
   Moon,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import { useTheme } from "next-themes";
 
-export default function ProjectDataUpload() {
+const ProjectDataUpload: React.FC = () => {
   const { theme, setTheme } = useTheme();
   const isDark = theme === "dark";
 
-  // State management
-  const [projectName, setProjectName] = useState("");
-  const [location, setLocation] = useState("");
-  const [plantCount, setPlantCount] = useState("");
-  const [species, setSpecies] = useState("");
-  const [notes, setNotes] = useState("");
-  const [photoFiles, setPhotoFiles] = useState(null);
-  const [droneFiles, setDroneFiles] = useState(null);
-  const [sensorFiles, setSensorFiles] = useState(null);
-  const [otherDocs, setOtherDocs] = useState(null);
-  const [formProgress, setFormProgress] = useState(0);
-  const [activeSection, setActiveSection] = useState("project");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  // State management with TypeScript types
+  const [projectName, setProjectName] = useState<string>("");
+  const [location, setLocation] = useState<string>("");
+  const [plantCount, setPlantCount] = useState<string>("");
+  const [species, setSpecies] = useState<string>("");
+  const [notes, setNotes] = useState<string>("");
+  const [photoFiles, setPhotoFiles] = useState<FileList | null>(null);
+  const [droneFiles, setDroneFiles] = useState<FileList | null>(null);
+  const [sensorFiles, setSensorFiles] = useState<FileList | null>(null);
+  const [otherDocs, setOtherDocs] = useState<FileList | null>(null);
+  const [formProgress, setFormProgress] = useState<number>(0);
+  const [activeSection, setActiveSection] = useState<"project" | "field" | "evidence">("project");
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   // Calculate form completion percentage
   useEffect(() => {
@@ -57,14 +56,14 @@ export default function ProjectDataUpload() {
   }, [projectName, location, plantCount, species, notes, photoFiles, droneFiles, sensorFiles, otherDocs]);
 
   // Form submission handler
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     const formData = new FormData();
     formData.append("projectName", projectName);
     formData.append("location", location);
-    formData.append("plantCount", String(plantCount));
+    formData.append("plantCount", plantCount);
     formData.append("species", species);
     formData.append("notes", notes);
     if (photoFiles) Array.from(photoFiles).forEach((f) => formData.append("photos", f));
@@ -99,7 +98,7 @@ export default function ProjectDataUpload() {
     isDark ? "text-gray-200" : "text-gray-800"
   }`;
 
-  const navButtonClasses = (section) =>
+  const navButtonClasses = (section: string) =>
     `px-4 py-2 text-sm font-medium relative flex items-center space-x-2 transition-all duration-300 ${
       activeSection === section
         ? isDark
@@ -110,23 +109,49 @@ export default function ProjectDataUpload() {
         : "text-gray-500 hover:text-gray-700"
     }`;
 
-  // Animation variants
-  const cardVariants = {
+  // Animation variants with TypeScript typing
+  const cardVariants: Variants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+        ease: "easeOut",
+        when: "beforeChildren", // Orchestrate: parent animates before children
+        staggerChildren: 0.1,  // Stagger child animations
+        delayChildren: 0.2,    // Delay child animations
+      },
+    },
+    active: {
+      backgroundColor: "#f00", // Example from your input
+      transition: { duration: 0.3 },
+    },
+  };
+
+  const childVariants: Variants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
   };
 
   return (
-    <div
+    <motion.div
       className={`min-h-screen py-12 px-4 sm:px-6 lg:px-8 transition-all duration-500 ${
         isDark
           ? "bg-gradient-to-br from-gray-900 via-gray-800 to-blue-900"
           : "bg-gradient-to-br from-blue-50 via-white to-green-50"
       }`}
+      variants={cardVariants}
+      initial="hidden"
+      animate="visible"
+      whileHover="active" // Apply the 'active' variant on hover
     >
       <div className="max-w-4xl mx-auto">
         {/* Header with Theme Toggle */}
-        <div className="flex flex-col sm:flex-row justify-between items-center mb-8">
+        <motion.div
+          variants={childVariants}
+          className="flex flex-col sm:flex-row justify-between items-center mb-8"
+        >
           <div className="text-center sm:text-left">
             <h1 className="text-4xl font-extrabold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
               Project Data Upload
@@ -169,14 +194,17 @@ export default function ProjectDataUpload() {
               />
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Navigation Tabs */}
-        <div className="flex space-x-2 mb-8 border-b border-gray-200 dark:border-gray-700">
+        <motion.div
+          variants={childVariants}
+          className="flex space-x-2 mb-8 border-b border-gray-200 dark:border-gray-700"
+        >
           {["project", "field", "evidence"].map((section) => (
             <button
               key={section}
-              onClick={() => setActiveSection(section)}
+              onClick={() => setActiveSection(section as "project" | "field" | "evidence")}
               className={navButtonClasses(section)}
             >
               {section === "project" && <FileText className="w-5 h-5" />}
@@ -192,7 +220,7 @@ export default function ProjectDataUpload() {
               )}
             </button>
           ))}
-        </div>
+        </motion.div>
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-8">
@@ -212,7 +240,7 @@ export default function ProjectDataUpload() {
                   } hover:shadow-xl`}
                 >
                   <CardHeader className="border-b border-gray-200 dark:border-gray-700">
-                    <div className="flex justify-between items-center">
+                    <motion.div variants={childVariants} className="flex justify-between items-center">
                       <div>
                         <CardTitle className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
                           Project Information
@@ -236,23 +264,25 @@ export default function ProjectDataUpload() {
                           }`}
                         />
                       </div>
-                    </div>
+                    </motion.div>
                   </CardHeader>
                   <CardContent className="p-6 space-y-6">
-                    <div className="space-y-4">
+                    <motion.div variants={childVariants} className="space-y-4">
                       <h3 className="text-xl font-semibold flex items-center space-x-2">
                         <Waves className="w-6 h-6 text-blue-500" />
                         <span>Project Details</span>
                       </h3>
                       <div className="grid gap-6 sm:grid-cols-2">
-                        <div>
+                        <motion.div variants={childVariants}>
                           <Label htmlFor="projectName" className={labelClasses}>
                             Project / Site Name
                           </Label>
                           <Input
                             id="projectName"
                             value={projectName}
-                            onChange={(e) => setProjectName(e.target.value)}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                              setProjectName(e.target.value)
+                            }
                             placeholder="e.g., Sundarbans Mangrove Restoration"
                             required
                             className={`mt-1 transition-all duration-300 ${
@@ -261,15 +291,17 @@ export default function ProjectDataUpload() {
                                 : "bg-white border-gray-200 focus:ring-blue-500"
                             }`}
                           />
-                        </div>
-                        <div>
+                        </motion.div>
+                        <motion.div variants={childVariants}>
                           <Label htmlFor="location" className={labelClasses}>
                             Location / GPS
                           </Label>
                           <Input
                             id="location"
                             value={location}
-                            onChange={(e) => setLocation(e.target.value)}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                              setLocation(e.target.value)
+                            }
                             placeholder="e.g., 21.90° N, 88.92° E"
                             required
                             className={`mt-1 transition-all duration-300 ${
@@ -278,9 +310,9 @@ export default function ProjectDataUpload() {
                                 : "bg-white border-gray-200 focus:ring-blue-500"
                             }`}
                           />
-                        </div>
+                        </motion.div>
                       </div>
-                    </div>
+                    </motion.div>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -301,7 +333,7 @@ export default function ProjectDataUpload() {
                   } hover:shadow-xl`}
                 >
                   <CardHeader className="border-b border-gray-200 dark:border-gray-700">
-                    <div className="flex justify-between items-center">
+                    <motion.div variants={childVariants} className="flex justify-between items-center">
                       <div>
                         <CardTitle className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
                           Field Reports
@@ -325,16 +357,16 @@ export default function ProjectDataUpload() {
                           }`}
                         />
                       </div>
-                    </div>
+                    </motion.div>
                   </CardHeader>
                   <CardContent className="p-6 space-y-6">
-                    <div className="space-y-4">
+                    <motion.div variants={childVariants} className="space-y-4">
                       <h3 className="text-xl font-semibold flex items-center space-x-2">
                         <Sprout className="w-6 h-6 text-green-500" />
                         <span>Field Data</span>
                       </h3>
                       <div className="grid gap-6 sm:grid-cols-2">
-                        <div>
+                        <motion.div variants={childVariants}>
                           <Label htmlFor="plantCount" className={labelClasses}>
                             Plant Count
                           </Label>
@@ -342,7 +374,9 @@ export default function ProjectDataUpload() {
                             type="number"
                             id="plantCount"
                             value={plantCount}
-                            onChange={(e) => setPlantCount(e.target.value)}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                              setPlantCount(e.target.value)
+                            }
                             placeholder="e.g., 5000"
                             className={`mt-1 transition-all duration-300 ${
                               isDark
@@ -350,15 +384,17 @@ export default function ProjectDataUpload() {
                                 : "bg-white border-gray-200 focus:ring-green-500"
                             }`}
                           />
-                        </div>
-                        <div>
+                        </motion.div>
+                        <motion.div variants={childVariants}>
                           <Label htmlFor="species" className={labelClasses}>
                             Species
                           </Label>
                           <Input
                             id="species"
                             value={species}
-                            onChange={(e) => setSpecies(e.target.value)}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                              setSpecies(e.target.value)
+                            }
                             placeholder="e.g., Rhizophora apiculata"
                             className={`mt-1 transition-all duration-300 ${
                               isDark
@@ -366,26 +402,28 @@ export default function ProjectDataUpload() {
                                 : "bg-white border-gray-200 focus:ring-green-500"
                             }`}
                           />
-                        </div>
+                        </motion.div>
                       </div>
-                      <div>
+                      <motion.div variants={childVariants}>
                         <Label htmlFor="notes" className={labelClasses}>
                           Notes / Observations
                         </Label>
                         <Textarea
                           id="notes"
                           value={notes}
-                          onChange={(e) => setNotes(e.target.value)}
+                          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                            setNotes(e.target.value)
+                          }
                           placeholder="Enter observations from the field visit..."
                           rows={5}
                           className={`mt-1 transition-all duration-300 ${
                             isDark
                               ? "bg-gray-700 text-white border-gray-600 focus:ring-green-400"
                               : "bg-white border-gray-200 focus:ring-green-500"
-                          }`}
+                            }`}
                         />
-                      </div>
-                    </div>
+                      </motion.div>
+                    </motion.div>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -406,7 +444,7 @@ export default function ProjectDataUpload() {
                   } hover:shadow-xl`}
                 >
                   <CardHeader className="border-b border-gray-200 dark:border-gray-700">
-                    <div className="flex justify-between items-center">
+                    <motion.div variants={childVariants} className="flex justify-between items-center">
                       <div>
                         <CardTitle className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
                           Evidence & Verification
@@ -430,16 +468,16 @@ export default function ProjectDataUpload() {
                           }`}
                         />
                       </div>
-                    </div>
+                    </motion.div>
                   </CardHeader>
                   <CardContent className="p-6 space-y-6">
-                    <div className="space-y-4">
+                    <motion.div variants={childVariants} className="space-y-4">
                       <h3 className="text-xl font-semibold flex items-center space-x-2">
                         <Upload className="w-6 h-6 text-purple-500" />
                         <span>Upload Evidence</span>
                       </h3>
                       <div className="grid gap-4 sm:grid-cols-2">
-                        <label htmlFor="photos" className={fileInputClasses}>
+                        <motion.label variants={childVariants} htmlFor="photos" className={fileInputClasses}>
                           <Camera className={iconClasses} />
                           <div className="flex-1">
                             <div className={labelClasses}>Upload Photos</div>
@@ -456,10 +494,12 @@ export default function ProjectDataUpload() {
                             type="file"
                             multiple
                             className="sr-only"
-                            onChange={(e) => setPhotoFiles(e.target.files)}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                              setPhotoFiles(e.target.files)
+                            }
                           />
-                        </label>
-                        <label htmlFor="drone" className={fileInputClasses}>
+                        </motion.label>
+                        <motion.label variants={childVariants} htmlFor="drone" className={fileInputClasses}>
                           <Satellite className={iconClasses} />
                           <div className="flex-1">
                             <div className={labelClasses}>
@@ -478,10 +518,12 @@ export default function ProjectDataUpload() {
                             type="file"
                             multiple
                             className="sr-only"
-                            onChange={(e) => setDroneFiles(e.target.files)}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                              setDroneFiles(e.target.files)
+                            }
                           />
-                        </label>
-                        <label htmlFor="sensor" className={fileInputClasses}>
+                        </motion.label>
+                        <motion.label variants={childVariants} htmlFor="sensor" className={fileInputClasses}>
                           <Cloud className={iconClasses} />
                           <div className="flex-1">
                             <div className={labelClasses}>IoT / Sensor Logs</div>
@@ -498,10 +540,12 @@ export default function ProjectDataUpload() {
                             type="file"
                             multiple
                             className="sr-only"
-                            onChange={(e) => setSensorFiles(e.target.files)}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                              setSensorFiles(e.target.files)
+                            }
                           />
-                        </label>
-                        <label htmlFor="otherDocs" className={fileInputClasses}>
+                        </motion.label>
+                        <motion.label variants={childVariants} htmlFor="otherDocs" className={fileInputClasses}>
                           <FileText className={iconClasses} />
                           <div className="flex-1">
                             <div className={labelClasses}>Other Documents</div>
@@ -518,12 +562,14 @@ export default function ProjectDataUpload() {
                             type="file"
                             multiple
                             className="sr-only"
-                            onChange={(e) => setOtherDocs(e.target.files)}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                              setOtherDocs(e.target.files)
+                            }
                           />
-                        </label>
+                        </motion.label>
                       </div>
-                    </div>
-                    <div className="space-y-3">
+                    </motion.div>
+                    <motion.div variants={childVariants} className="space-y-3">
                       <h3
                         className={`text-sm font-medium ${
                           isDark ? "text-white" : "text-gray-900"
@@ -538,7 +584,11 @@ export default function ProjectDataUpload() {
                           { text: "Species inventory documentation", status: "optional" },
                           { text: "Carbon measurement methodology", status: "required" },
                         ].map((item, i) => (
-                          <div key={i} className="flex items-center space-x-3">
+                          <motion.div
+                            key={i}
+                            variants={childVariants}
+                            className="flex items-center space-x-3"
+                          >
                             <div
                               className={`w-4 h-4 rounded-full ${
                                 item.status === "required" ? "bg-red-500" : "bg-yellow-500"
@@ -560,10 +610,10 @@ export default function ProjectDataUpload() {
                             >
                               {item.status}
                             </span>
-                          </div>
+                          </motion.div>
                         ))}
                       </div>
-                    </div>
+                    </motion.div>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -571,7 +621,10 @@ export default function ProjectDataUpload() {
           </AnimatePresence>
 
           {/* Navigation Buttons */}
-          <div className="flex justify-between items-center mt-8">
+          <motion.div
+            variants={childVariants}
+            className="flex justify-between items-center mt-8"
+          >
             <div className="flex space-x-3">
               {activeSection !== "project" && (
                 <Button
@@ -629,9 +682,11 @@ export default function ProjectDataUpload() {
                 </Button>
               )}
             </div>
-          </div>
+          </motion.div>
         </form>
       </div>
-    </div>
+    </motion.div>
   );
-}
+};
+
+export default ProjectDataUpload;
