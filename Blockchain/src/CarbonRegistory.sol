@@ -1,22 +1,21 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import "./CarbonToken.sol";
-
-/// @title Carbon Registry
+import {ERC20} from "../lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol";
+import {CarbonToken} from "./CarbonToken.sol";
 contract CarbonRegistry {
     struct RegistryEntry {
         uint256 id;
         address projectOwner;
         uint256 carbonCredits;
-        string coordinates; 
-        string orgId;       
-        uint256 date;       
+        string coordinates;
+        string orgId;
+        uint256 date;
+        uint256 area;
     }
 
     uint256 public nextId;
     CarbonToken public carbonToken;
-
     mapping(uint256 => RegistryEntry) public entries;
 
     event Registered(
@@ -25,33 +24,46 @@ contract CarbonRegistry {
         uint256 credits,
         string coordinates,
         string orgId,
-        uint256 date
+        uint256 date,
+        uint256 area
     );
 
-    constructor(address _carbonToken) {
-        carbonToken = CarbonToken(_carbonToken);
+    constructor() {
+        carbonToken = new CarbonToken();
     }
 
     function registerProject(
         uint256 credits,
         string memory coordinates,
         string memory orgId,
-        uint256 date
+        uint256 date,
+        uint256 area
     ) external {
         require(credits > 0, "Credits must be > 0");
-
-        carbonToken.transferFrom(msg.sender, address(this), credits);
 
         entries[nextId] = RegistryEntry({
             id: nextId,
             projectOwner: msg.sender,
-            carbonCredits: credits,
+            carbonCredits: credits * 1e18, // store scaled with 18 decimals
             coordinates: coordinates,
             orgId: orgId,
-            date: date
+            date: date,
+            area: area
         });
 
-        emit Registered(nextId, msg.sender, credits, coordinates, orgId, date);
+        // Mint tokens to project owner
+        carbonToken.mint(msg.sender, credits * 1e18);
+
+        emit Registered(
+            nextId,
+            msg.sender,
+            credits * 1e18,
+            coordinates,
+            orgId,
+            date,
+            area
+        );
+
         nextId++;
     }
 }

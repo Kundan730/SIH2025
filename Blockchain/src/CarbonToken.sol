@@ -5,7 +5,19 @@ import {ERC20} from "../lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.s
 
 /// @title Carbon Credit Token
 contract CarbonToken is ERC20 {
-    constructor(uint256 initialSupply) ERC20("Carbon Credit Token", "CCT") {
-        _mint(msg.sender, initialSupply);
+    address public registry; // only registry can mint
+
+    constructor() ERC20("Carbon Credit Token", "CCT") {
+        registry = msg.sender; // deployer will be registry contract
+    }
+
+    modifier onlyRegistry() {
+        require(msg.sender == registry, "Not authorized");
+        _;
+    }
+
+    /// @notice Mint new tokens (only registry)
+    function mint(address to, uint256 amount) external onlyRegistry {
+        _mint(to, amount);
     }
 }

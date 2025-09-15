@@ -4,49 +4,50 @@ pragma solidity ^0.8.13;
 import "../lib/forge-std/src/Test.sol";
 import "../src/CarbonRegistory.sol";
 import "../src/CarbonToken.sol";
-
 contract CarbonRegistryTest is Test {
     CarbonRegistry registry;
     CarbonToken token;
     address ngo = address(0xBEEF);
 
     function setUp() public {
-        token = new CarbonToken(1000 ether);
-        registry = new CarbonRegistry(address(token));
-
-        token.transfer(ngo, 100 ether);
+        // Deploy registry (which internally deploys CarbonToken)
+        registry = new CarbonRegistry();
+        token = registry.carbonToken();
     }
 
-    function testRegisterProject() public {
+    function testRegisterProjectMintsTokens() public {
         vm.startPrank(ngo);
 
-        token.approve(address(registry), 50 ether);
-
         registry.registerProject(
-            50 ether,
+            100, // credits
             "12.9716N,77.5946E",
             "NGO-123",
-            block.timestamp
+            block.timestamp,
+            10 // area
         );
 
         vm.stopPrank();
 
+        // Verify stored entry
         (
             uint256 id,
             address owner,
             uint256 credits,
             string memory coords,
             string memory orgId,
-            uint256 date
+            uint256 date,
+            uint256 area
         ) = registry.entries(0);
 
         assertEq(id, 0);
         assertEq(owner, ngo);
-        assertEq(credits, 50 ether);
+        assertEq(credits, 100 ether); // scaled with 18 decimals
         assertEq(coords, "12.9716N,77.5946E");
         assertEq(orgId, "NGO-123");
         assertEq(date, block.timestamp);
+        assertEq(area, 10);
 
-        assertEq(token.balanceOf(address(registry)), 50 ether);
+        // Verify that tokens were minted to NGO
+        assertEq(token.balanceOf(ngo), 100 ether);
     }
 }
