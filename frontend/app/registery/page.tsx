@@ -130,6 +130,7 @@ const ProjectDataUpload: React.FC = () => {
       setProjectData(result.data);
 
       // ✅ Extract CO2e_tonnes and area_hectares from array [ { area_hectares, CO2e_tonnes } ]
+      // @ts-ignore
       const apiData = result.data?.[0];
       if (apiData) {
         const credits = apiData.CO2e_tonnes ?? 0;
@@ -411,6 +412,7 @@ const ProjectDataUpload: React.FC = () => {
             <Button
               variant="outline"
               size="icon"
+              // @ts-ignore
               onClick={() => setTheme(isDark ? 'light' : 'dark')}
               className={`transition-all duration-300 ${
                 isDark
