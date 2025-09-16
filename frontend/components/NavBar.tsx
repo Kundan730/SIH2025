@@ -115,12 +115,15 @@ export default function Navbar() {
               </a>
             ))}
             <div className="px-4 pt-2">
-              <button
+              {/* <button
                 className="w-full bg-gradient-to-r from-blue-600 to-green-600 text-white px-6 py-3 rounded-xl font-semibold shadow-md hover:shadow-lg hover:shadow-blue-500/20 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98]"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Get Started
-              </button>
+              </button> */}
+              <div className="flex items-center space-x-3">
+  <WalletMultiButton />
+</div>
             </div>
           </div>
         </div>
