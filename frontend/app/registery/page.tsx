@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { ethers } from "ethers";
+import abi from "@/abi/CarbonRegistory.json";
 import {
   Upload,
   Waves,
@@ -25,11 +27,21 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTheme } from "next-themes";
 
+interface FormData {
+  projectName: string;
+  location: string;
+  plantCount: string;
+  species: string;
+  notes: string;
+  photoFiles: FileList | null;
+  droneFiles: FileList | null;
+  sensorFiles: FileList | null;
+  otherDocs: FileList | null;
+}
+
 const ProjectDataUpload: React.FC = () => {
   const { theme, setTheme } = useTheme();
   const isDark = theme === "dark";
-
-  // State management with TypeScript types
   const [projectName, setProjectName] = useState<string>("");
   const [location, setLocation] = useState<string>("");
   const [plantCount, setPlantCount] = useState<string>("");
@@ -42,8 +54,38 @@ const ProjectDataUpload: React.FC = () => {
   const [formProgress, setFormProgress] = useState<number>(0);
   const [activeSection, setActiveSection] = useState<"project" | "field" | "evidence">("project");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [status, setStatus] = useState<string>("");
 
-  // Calculate form completion percentage
+  const contractAddress = "0x0C6E8Cd6C78278CcA0f69F0F185b4E5d4B7789BE";
+
+  const getContract = async () =>{
+    if (!window.ethereum) throw new Error("No wallet found");
+    const provider = new ethers.BrowserProvider(window.ethereum);
+    const signer = await provider.getSigner();
+    return new ethers.Contract(contractAddress, abi, signer);
+  }
+
+  const registerWithEvent = async (formdata: FormData, CarbonCredits: Number ) => {
+    try {
+      setStatus("Registering (event check)...");
+      const contract = await getContract();
+
+      const tx = await contract.registerProject(
+        CarbonCredits,
+        formdata.location,
+        formdata.projectName,
+        Math.floor(Date.now() / 1000),
+        formdata.plantCount
+      );
+      const receipt = await tx.wait();
+      console.log(tx.hash);
+      console.log("Event logs:", receipt.logs);
+      setStatus("✅ Project registered & event emitted (check console)");
+    } catch (err: any) {
+      setStatus("❌ Error: " + err.message);
+    }
+  };
+
   useEffect(() => {
     let completed = 0;
     if (projectName) completed += 1;
@@ -60,20 +102,33 @@ const ProjectDataUpload: React.FC = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    const formData = new FormData();
-    formData.append("projectName", projectName);
-    formData.append("location", location);
-    formData.append("plantCount", plantCount);
-    formData.append("species", species);
-    formData.append("notes", notes);
-    if (photoFiles) Array.from(photoFiles).forEach((f) => formData.append("photos", f));
-    if (droneFiles) Array.from(droneFiles).forEach((f) => formData.append("drone", f));
-    if (sensorFiles) Array.from(sensorFiles).forEach((f) => formData.append("sensorLogs", f));
-    if (otherDocs) Array.from(otherDocs).forEach((f) => formData.append("otherDocs", f));
+    console.log(projectName, location, plantCount, species, notes, photoFiles, droneFiles, sensorFiles, otherDocs);
+
+    const formData: FormData = {
+      projectName,
+      location,
+      plantCount,
+      species,
+      notes,
+      photoFiles,
+      droneFiles,
+      sensorFiles,
+      otherDocs,
+    };
+    // formData.append("projectName", projectName);
+    // formData.append("location", location);
+    // formData.append("plantCount", plantCount);
+    // formData.append("species", species);
+    // formData.append("notes", notes);
+    // if (photoFiles) Array.from(photoFiles).forEach((f) => formData.append("photos", f));
+    // if (droneFiles) Array.from(droneFiles).forEach((f) => formData.append("drone", f));
+    // if (sensorFiles) Array.from(sensorFiles).forEach((f) => formData.append("sensorLogs", f));
+    // if (otherDocs) Array.from(otherDocs).forEach((f) => formData.append("otherDocs", f));
 
     try {
-      console.log("Form submitted", formData);
+      console.log("Form submitted", formData.projectName);
       await new Promise((resolve) => setTimeout(resolve, 1000));
+      registerWithEvent(formData, 10);
       alert("Project data submitted successfully!");
     } catch (error) {
       console.error("Submission error:", error);
@@ -109,7 +164,6 @@ const ProjectDataUpload: React.FC = () => {
         : "text-gray-500 hover:text-gray-700"
     }`;
 
-  // Animation variants with TypeScript typing
   const cardVariants: Variants = {
     hidden: { opacity: 0, y: 20 },
     visible: {
@@ -660,11 +714,12 @@ const ProjectDataUpload: React.FC = () => {
               {activeSection !== "evidence" ? (
                 <Button
                   type="button"
-                  className="bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white transition-all duration-300"
-                  onClick={() => {
-                    if (activeSection === "project") setActiveSection("field");
-                    if (activeSection === "field") setActiveSection("evidence");
+                  onClick={(e) => {
+                  e.preventDefault(); 
+                  if (activeSection === "project") setActiveSection("field");
+                  if (activeSection === "field") setActiveSection("evidence");
                   }}
+                  className="bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white transition-all duration-300"
                 >
                   <span>Continue</span>
                   <ChevronRight className="w-5 h-5 ml-2" />
