@@ -368,7 +368,7 @@ const ProjectDataUpload: React.FC = () => {
                       <div className="grid gap-6 sm:grid-cols-2">
                         <motion.div variants={childVariants}>
                           <Label htmlFor="plantCount" className={labelClasses}>
-                            Plant Count
+                            Area
                           </Label>
                           <Input
                             type="number"
@@ -387,7 +387,7 @@ const ProjectDataUpload: React.FC = () => {
                         </motion.div>
                         <motion.div variants={childVariants}>
                           <Label htmlFor="species" className={labelClasses}>
-                            Species
+                            Plant Species
                           </Label>
                           <Input
                             id="species"

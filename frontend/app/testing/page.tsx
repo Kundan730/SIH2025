@@ -17,7 +17,6 @@ export default function Home() {
     return new ethers.Contract(contractAddress, abi, signer);
   };
 
-  // 1. Register Project (Mint tokens + store entry)
   const registerProject = async () => {
     try {
       setStatus("Registering project...");
